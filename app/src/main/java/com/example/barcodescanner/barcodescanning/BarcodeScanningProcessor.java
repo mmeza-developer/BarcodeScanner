@@ -79,11 +79,6 @@ public class BarcodeScanningProcessor extends VisionProcessorBase<List<FirebaseV
             CameraImageGraphic imageGraphic = new CameraImageGraphic(graphicOverlay, originalCameraImage);
             graphicOverlay.add(imageGraphic);
         }
-       /* for (int i = 0; i < barcodes.size(); ++i) {
-            FirebaseVisionBarcode barcode = barcodes.get(i);
-            BarcodeGraphic barcodeGraphic = new BarcodeGraphic(graphicOverlay, barcode);
-            graphicOverlay.add(barcodeGraphic);
-        }*/
         graphicOverlay.postInvalidate();
 
         List<FirebaseVisionBarcode> lBarcodes=selectFocus(barcodes,frameMetadata);
