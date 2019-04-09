@@ -254,10 +254,5 @@ public class OverlayView extends View {
             verticalPadding=(viewPortHeight/10);
             horizontalPadding=(int)(viewPortWidth*0.3);
         }
-
-        Log.w("viewPortWidth changed:"," "+viewPortWidth);
-        Log.w("viewPortHeight changed:"," "+viewPortHeight);
     }
-
-
 }
