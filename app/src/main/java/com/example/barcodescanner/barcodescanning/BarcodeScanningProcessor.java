@@ -104,7 +104,8 @@ public class BarcodeScanningProcessor extends VisionProcessorBase<List<FirebaseV
 
             double distanceFromTopLeftToCenter =  Math.sqrt((topLefttDx * topLefttDx) + (topLeftDy * topLeftDy));
             double distanceFromBottomRightToCenter =  Math.sqrt((bottomRightDx * bottomRightDx) + (bottomRightDy * bottomRightDy));
-
+            Log.w("Distance: ","distanceFromTopLeftToCenter: "+distanceFromTopLeftToCenter);
+            Log.w("Distance: ","distanceFromBottomRightToCenter: "+distanceFromBottomRightToCenter);
             if (distanceFromTopLeftToCenter <= nearestDistance && distanceFromBottomRightToCenter<= nearestDistance) {
                 finalListBarcode.add(barcode);
             }
@@ -130,6 +131,8 @@ public class BarcodeScanningProcessor extends VisionProcessorBase<List<FirebaseV
 
         int dx=Math.abs((widthCenter-width*2));
         int dy=Math.abs((heightCenter-height*2));
+        Log.w("Distance: ","widthCenter: "+widthCenter);
+        Log.w("Distance: ","heightCenter: "+heightCenter);
 
         return Math.sqrt((dx*dx)+(dy*dy));
     }

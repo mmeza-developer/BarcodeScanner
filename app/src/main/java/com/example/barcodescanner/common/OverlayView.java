@@ -19,11 +19,25 @@ import android.view.View;
 
 public class OverlayView extends View {
 
+    private static final int TEXT_COLOR = Color.WHITE;
+    private static final float TEXT_SIZE = 35.0f;
+
     Paint paint;
     Paint paintGreenRectangle;
     Path pathGreenRectangle;
+
+    Paint paintBlackBorder;
+    Path pathBrackBorderRight;
+    Path pathBrackBorderBottom;
+    Path pathBrackBorderTop;
+    Path pathBrackBorderLeft;
+
+
     Canvas canvas;
     Context context;
+
+    final float spaceBetweenCorners=100.0f;
+    final float paddingBorders=5.0f;
 
     int viewPortHeight = 0;
     int viewPortWidth = 0;
@@ -101,8 +115,17 @@ public class OverlayView extends View {
         paintGreenRectangle.setStrokeWidth(10);
         paintGreenRectangle.setStrokeJoin(Paint.Join.ROUND);
         paintGreenRectangle.setStrokeCap(Paint.Cap.ROUND);
-        pathGreenRectangle=new Path();
 
+        paintBlackBorder = new Paint();
+        paintBlackBorder.setStyle(Paint.Style.STROKE);
+        paintBlackBorder.setColor(Color.GRAY);
+        paintBlackBorder.setStrokeWidth(10);
+
+        pathGreenRectangle=new Path();
+        pathBrackBorderBottom=new Path();
+        pathBrackBorderLeft=new Path();
+        pathBrackBorderRight=new Path();
+        pathBrackBorderTop=new Path();
 
         canvas = new Canvas();
         overlayRect = new Rect(0, 0, 0, 0);
@@ -180,7 +203,13 @@ public class OverlayView extends View {
                 float flBottom=(initialYPosition + viewHeight);
 
                 overlayRect.set(lLeft, lTop, lRight,lBottom);
+
                 pathGreenRectangle.addRect(flLeft,flTop,flRight,flBottom, Path.Direction.CW);
+
+                pathBrackBorderTop.addRect(lLeft+spaceBetweenCorners,flTop,lRight-spaceBetweenCorners,flTop+paddingBorders,Path.Direction.CW);
+                pathBrackBorderLeft.addRect(lLeft,flTop+spaceBetweenCorners,lLeft+paddingBorders,flBottom-spaceBetweenCorners,Path.Direction.CW);
+                pathBrackBorderRight.addRect(lLeft+paddingBorders,flTop+spaceBetweenCorners,lRight,flBottom-spaceBetweenCorners,Path.Direction.CW);
+                pathBrackBorderBottom.addRect(lLeft+spaceBetweenCorners,flBottom-paddingBorders,lRight-spaceBetweenCorners,flBottom,Path.Direction.CW);
             }else{
                 initialYPosition = (viewPortHeight / 2) - (viewHeight / 2);
                 initialDraw = true;
@@ -203,6 +232,11 @@ public class OverlayView extends View {
         canvas.clipRect(overlayRect, Region.Op.XOR);
         canvas.drawPaint(paint);
         canvas.drawPath(pathGreenRectangle,paintGreenRectangle);
+        canvas.drawPath(pathBrackBorderTop,paintBlackBorder);
+        canvas.drawPath(pathBrackBorderLeft,paintBlackBorder);
+        canvas.drawPath(pathBrackBorderRight,paintBlackBorder);
+        canvas.drawPath(pathBrackBorderBottom,paintBlackBorder);
+
         canvas.restore();
     }
 
@@ -225,84 +259,5 @@ public class OverlayView extends View {
         Log.w("viewPortHeight changed:"," "+viewPortHeight);
     }
 
-    // events when touching the screen
-    public boolean onTouchEvent(MotionEvent event) {
 
-        if(isMovableView)
-        {
-            int eventaction = event.getAction();
-
-            int positionX = (int) event.getX();
-            int positionY = (int) event.getY();
-
-            switch (eventaction) {
-                case MotionEvent.ACTION_DOWN:
-                    // touch down so check if the finger is on the rect or not
-                    Log.d(TAG, "onTouchEvent: DOWN");
-
-                    downX = (int) event.getX();
-                    downY = (int) event.getY();
-
-                    if (overlayRegion.contains(positionX, positionY)) {
-                        prevX = positionX;
-                        prevY = positionY;
-                        canImageMove = true;
-                        Log.d(TAG, "onTouchEvent: posY" + positionY);
-                        Log.d(TAG, "onTouchEvent: DOWN valid");
-                    }
-                    break;
-                case MotionEvent.ACTION_MOVE:
-
-                    currentX = (int) event.getX();
-                    currentY = (int) event.getY();
-
-                    if (canImageMove) {
-                        final int distY = Math.abs(positionY - prevY);
-                        final int distX = Math.abs(positionX - prevX);
-
-                        int updatedYPos = 0;
-
-                        if (currentY > downY) {
-                            //drag down
-                            updatedYPos = overlayRect.bottom + distY;
-                            //Log.d(TAG+(viewPortHeight-verticalPadding), "onTouchEvent: drag down"+updatedYPos);
-                            if (updatedYPos <= (viewPortHeight - verticalPadding)) {
-                                overlayRect.bottom = updatedYPos;
-                                overlayRect.top = updatedYPos - viewHeight;
-                                overlayRegion.set(overlayRect);
-                                prevX = positionX;
-                                prevY = positionY;
-                                invalidate();
-                                downY = currentY;
-                            }
-                        } else {
-                            //drag up
-                            updatedYPos = overlayRect.top - distY;
-                            //Log.d(TAG+verticalPadding, "onTouchEvent: drag up"+updatedYPos);
-                            if (updatedYPos > verticalPadding) {
-                                overlayRect.top = updatedYPos;
-                                overlayRect.bottom = updatedYPos + viewHeight;
-                                overlayRegion.set(overlayRect);
-                                prevX = positionX;
-                                prevY = positionY;
-                                invalidate();
-                                downY = currentY;
-                            }
-                        }
-                    }
-                    break;
-                case MotionEvent.ACTION_UP:
-                    // touch drop - just do things here after dropping
-                    canImageMove = false;
-                    break;
-
-            }
-            // redraw the canvas
-
-            return true;
-        }
-        else
-            return false;
-
-    }
 }
