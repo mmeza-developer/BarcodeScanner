@@ -17,17 +17,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.example.barcodescanner.barcodescanning.BarcodeScanningProcessor;
 import com.example.barcodescanner.common.CameraSource;
@@ -60,6 +57,7 @@ public final class LivePreviewActivity extends AppCompatActivity
   private CameraSourcePreview preview;
   private GraphicOverlay graphicOverlay;
   private String selectedModel = BARCODE_DETECTION;
+  OverlayView overlayView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +75,7 @@ public final class LivePreviewActivity extends AppCompatActivity
       Log.d(TAG, "graphicOverlay is null");
     }
 
-    OverlayView overlayView=(OverlayView) findViewById(R.id.overlayView);
+    overlayView=(OverlayView) findViewById(R.id.overlayView);
 
     // Hide the toggle button if there is only 1 camera
 
