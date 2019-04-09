@@ -16,7 +16,9 @@ package com.example.barcodescanner.barcodescanning;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.example.barcodescanner.common.GraphicOverlay;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
@@ -32,6 +34,7 @@ public class BarcodeGraphic extends GraphicOverlay.Graphic {
   private final Paint barcodePaint;
   private final FirebaseVisionBarcode barcode;
 
+
   BarcodeGraphic(GraphicOverlay overlay, FirebaseVisionBarcode barcode) {
     super(overlay);
 
@@ -39,7 +42,7 @@ public class BarcodeGraphic extends GraphicOverlay.Graphic {
 
     rectPaint = new Paint();
     rectPaint.setColor(TEXT_COLOR);
-    rectPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+    rectPaint.setStyle(Paint.Style.STROKE);
     rectPaint.setStrokeWidth(STROKE_WIDTH);
 
     barcodePaint = new Paint();
@@ -62,9 +65,16 @@ public class BarcodeGraphic extends GraphicOverlay.Graphic {
     rect.top = translateY(rect.top);
     rect.right = translateX(rect.right);
     rect.bottom = translateY(rect.bottom);
+
+    Log.w("Sizes: ","left: "+ rect.left);
+    Log.w("Sizes: ","top: "+ rect.top);
+    Log.w("Sizes: ","right: "+ rect.right);
+    Log.w("Sizes: ","bottom: "+ rect.bottom);
+
     canvas.drawRect(rect, rectPaint);
 
     // Renders the barcode at the bottom of the box.
-    canvas.drawText(barcode.getRawValue(), rect.left, rect.bottom, barcodePaint);
+    //canvas.drawText(barcode.getRawValue(), rect.left, rect.bottom, barcodePaint);
   }
+
 }

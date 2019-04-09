@@ -79,20 +79,18 @@ public class BarcodeScanningProcessor extends VisionProcessorBase<List<FirebaseV
             CameraImageGraphic imageGraphic = new CameraImageGraphic(graphicOverlay, originalCameraImage);
             graphicOverlay.add(imageGraphic);
         }
-        /*
-        for (int i = 0; i < barcodes.size(); ++i) {
+       /* for (int i = 0; i < barcodes.size(); ++i) {
             FirebaseVisionBarcode barcode = barcodes.get(i);
             BarcodeGraphic barcodeGraphic = new BarcodeGraphic(graphicOverlay, barcode);
             graphicOverlay.add(barcodeGraphic);
-        }
-        */
+        }*/
         graphicOverlay.postInvalidate();
+
         List<FirebaseVisionBarcode> lBarcodes=selectFocus(barcodes,frameMetadata);
         if(lBarcodes.size()>0){
             mBarcodeListener.onSuccess(barcodes.get(0));
 
         }
-
     }
 
     public List<FirebaseVisionBarcode> selectFocus(List<FirebaseVisionBarcode> barcodes,FrameMetadata metadata) {
@@ -104,16 +102,15 @@ public class BarcodeScanningProcessor extends VisionProcessorBase<List<FirebaseV
 
         for (int i = 0; i < barcodes.size(); i++) {
             FirebaseVisionBarcode barcode = barcodes.get( i);
-            float dx = Math.abs((metadata.getWidth() / 2) - barcode.getBoundingBox().centerX());
-            float dy = Math.abs((metadata.getHeight() / 2) - barcode.getBoundingBox().centerY());
+            float topLefttDx = Math.abs((metadata.getWidth() / 2) - barcode.getBoundingBox().top);
+            float topLeftDy = Math.abs((metadata.getHeight() / 2) - barcode.getBoundingBox().left);
+            float bottomRightDx = Math.abs((metadata.getWidth() / 2) - barcode.getBoundingBox().bottom);
+            float bottomRightDy = Math.abs((metadata.getHeight() / 2) - barcode.getBoundingBox().right);
 
-            double distanceFromCenter =  Math.sqrt((dx * dx) + (dy * dy));
+            double distanceFromTopLeftToCenter =  Math.sqrt((topLefttDx * topLefttDx) + (topLeftDy * topLeftDy));
+            double distanceFromBottomRightToCenter =  Math.sqrt((bottomRightDx * bottomRightDx) + (bottomRightDy * bottomRightDy));
 
-            Log.w("Distance: ","barcode.getBoundingBox().centerX(): "+barcode.getBoundingBox().centerX());
-            Log.w("Distance: ","barcode.getBoundingBox().centerY(): "+barcode.getBoundingBox().centerY());
-            Log.w("Distance: ","distanceFromCenter: "+distanceFromCenter);
-
-            if (distanceFromCenter <= nearestDistance) {
+            if (distanceFromTopLeftToCenter <= nearestDistance && distanceFromBottomRightToCenter<= nearestDistance) {
                 finalListBarcode.add(barcode);
             }
         }
@@ -136,14 +133,8 @@ public class BarcodeScanningProcessor extends VisionProcessorBase<List<FirebaseV
             height=(int)(frameMetadata.getHeight()*0.3);
         }
 
-        int dx=Math.abs((widthCenter-width));
-        int dy=Math.abs((heightCenter-height));
-
-        Log.w("Distance: ","distanceSelectedAreaToCenter: ");
-        Log.w("Distance: ","widthCenter: "+widthCenter);
-        Log.w("Distance: ","heightCenter: "+heightCenter);
-        Log.w("Distance: ","width: "+width);
-        Log.w("Distance: ","heightCenter: "+height);
+        int dx=Math.abs((widthCenter-width*2));
+        int dy=Math.abs((heightCenter-height*2));
 
         return Math.sqrt((dx*dx)+(dy*dy));
     }
